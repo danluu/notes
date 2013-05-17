@@ -1,0 +1,15 @@
+Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
+
+* Questions
+** Chapter 1  
+  Why does gate vs. interconnect delay scale the way it does?
+  For interconnect, naively, both dimensions shrink, so resistance goes up by S^2
+  But length shrinks by S, reducing R by S, and also reducing the C we need to charge?
+
+  For gates, channel shrinks, and so does the capacitance at both ends. 
+
+  When does it make sense to sleep to halt (run very fast so we can enter a low p-state)?
+
+* Chapter 1: Basic Quant stuff
+  
+  
