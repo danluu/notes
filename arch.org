@@ -11,5 +11,5 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
   When does it make sense to sleep to halt (run very fast so we can enter a low p-state)?
 
 * Chapter 1: Basic Quant stuff
-  
+* Chapter 2: Memory Hierarchy
   
