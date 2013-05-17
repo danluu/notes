@@ -12,4 +12,28 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
 
 * Chapter 1: Basic Quant stuff
 * Chapter 2: Memory Hierarchy
+  Terminology. With a set associative cache, we map a block to a set, and we can then place the block anywhere in the set
+  set = [block] % #sets
+
+** cache tradeoffs
+*** larger block sizes
+    lower compulsory miss rate. Also, fewer tags => slightly reduced power
+    higher capacity, conflict miss rate
+*** bigger cache
+    lower capacity miss rate, obv. 
+    higher power, possibly longer latency
+*** higher associativity
+    lower conflict miss rate
+    higher power, possibly longer latency
+*** multilevel caches
+    size, perhaps? Tradeoff is non-obvious
+    higher level cache can be bigger and have higher associativity
+*** give reads priority over writes
+    reduces miss penalty. We do this in CNR
+    Note: write buffers create a hazard (read after write), so we should check write buffers on a miss
+*** avoid address translation for cache indexing
+    page offset has same VA as PA
+    removes TLB from critical access path, but limits size of cache
+    Usually reasonable for l1?
+   
   
