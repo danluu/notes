@@ -18,6 +18,8 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
   Terminology. With a set associative cache, we map a block to a set, and we can then place the block anywhere in the set
   set = [block] % #sets
 
+  Note: A typical thing to do is have a WT l1 and a WB l2
+
 ** cache tradeoffs
 *** larger block sizes
     lower compulsory miss rate. Also, fewer tags => slightly reduced power
@@ -39,7 +41,7 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
     removes TLB from critical access path, but limits size of cache
     Usually reasonable for l1?
 
-** performance improvements
+** cache performance improvements
 *** reduce latency
     small (l1) cache, way prediction
     These also decrease power
@@ -78,3 +80,35 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
 *** above two, via parallelism
     hardware and compiler prefetching.
     Usually increase power, due to unused prefetched data
+
+** main memory
+*** SRAM: nothing interesting in the text about it
+*** DRAM
+    recall that addressing is multiplexed (RAS/CAS)
+    DIMM usually contains 4-16 chips, output usually 8 bytes wide
+
+    SDRAM: synchronus (DRAM used to be async!)
+    burst mode: one address, multiple data
+
+**** Why is GDDR faster than DDR?
+     wider interface (32 bit vs 4-16)
+     support higher clock rate by soldering chip directly to board; chip talks directly to GPU. Better signal integretiy / less capacitance?
+
+** VMM
+   architecture specified by page talbes (x86, IBM VM/370) or TLBs (many RISCs)
+   
+   Don't do two stage indirection. Instead, keep shadow page tables that map from guest VA to PA
+   VMM must trap any attempts to modify page tables, and substitute appropriate modification
+
+   Must also virtualize I/O
+   Mechanism varies: disks are usually partititioned, ethernet/wireless can be time sliced, etc.
+
+   Note: OS can be more efficient if it knows it's virtualized (Xen)
+    
+   Problematic instructions for a VMM:
+   SGDT/SLDT/SIDT. Not sure why these are listed as problematic, because they should #GP if we're not at cpl 0
+   PUSHF/POPF. POPF ignores IF instead of trapping, PUSHF lets user mode OS see that something strange has happened
+   VIP/VIF flags are supposed to work around that problem (user mode manipulates VIF/VIP instead of IF/IP)
+      
+** TODO: read i7 cache section
+   
