@@ -10,6 +10,9 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
 
   When does it make sense to sleep to halt (run very fast so we can enter a low p-state)?
 
+** Chapter 2
+   How does way prediction work
+
 * Chapter 1: Basic Quant stuff
 * Chapter 2: Memory Hierarchy
   Terminology. With a set associative cache, we map a block to a set, and we can then place the block anywhere in the set
@@ -35,5 +38,43 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
     page offset has same VA as PA
     removes TLB from critical access path, but limits size of cache
     Usually reasonable for l1?
-   
-  
+
+** performance improvements
+*** reduce latency
+    small (l1) cache, way prediction
+    These also decrease power
+
+    Critical path:
+    address tag memory using index, compare read tag to address, choose correct item (mux)
+    direct mapped caches can overlap tag check with data transmission (way prediction for set associative)
+
+**** way prediction
+     Guess the next way, somehow
+     Power saving method: only do one tag access. If that misses, try the other tags the next cycle
+     typ: 90% for 2-way, 80% for 4-way.
+
+     We could also do the same for the access (not just tag match/selection), but that increases the mispredict penalty
+**** Nonblocking
+     Nonblocking simply means that we can keep serving hits if there's a miss outstanding
+     Note: supporting N misses at some level means you must support at least N misses at each higher level (where does the miss come from?)
+     Not quite true for caches shared across processors, of course
+    
+*** bandwith
+    add pipe stages, used banked cache, nonblocking
+    Mixed effect on power, but wouldn't you expect these to increase power? Well, it's complicated, because maybe serving things sooner decreases power
+
+    Note: adding pipe stages directly affects branch mispredict penalty
+*** reduce miss penalty
+    Critical word first, merge write buffers
+    Little impact on power
+**** critical word first: what it sounds like (must have support on bus)
+**** early restart: memory request goes in normal order, but required block gets sent to the processor immediately on read
+**** write merging
+     Check write buffer to see if we're writing same address again. Merge.
+     Obv, important for WT cache. Still some benefit for WB cache
+*** reduce miss rate
+    compiler / code optimizations (cache blocking, loop interchange to make inner loop tight)
+    Obv, compile time improvements help power
+*** above two, via parallelism
+    hardware and compiler prefetching.
+    Usually increase power, due to unused prefetched data
