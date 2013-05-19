@@ -12,6 +12,7 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
 
 ** Chapter 2
    How does way prediction work
+** Chapter 3
 
 * Chapter 1: Basic Quant stuff
 * Chapter 2: Memory Hierarchy
@@ -112,3 +113,83 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
       
 ** TODO: read i7 cache section
    
+* Chapter 3: ILP
+** dependencies
+*** data (true) dependencies
+*** name dependency (use same register or memory location, but no data flow)
+    antidependency between i and j: j writes, i reads.
+    (WAR). This can't happen in most static pipelines, because we read before we write
+    output dependence: i and j write the same register
+*** control dependency
+    Can't (statically) move things before or after branches, because that would add/remove the dependency
+** basic compiler optimizations
+*** loop unrolling
+** advanced branch prediction
+   2-bit (saturating counter) predictor schemes only look at branch itself
+   Can improve accuracy by looking at other branches 
+
+*** Instead, use two-level (correlating) predictor
+   e.g., a (1,2) predictor uses info from the last branch to choose between 2 2-bit predictors
+   (m,n) m branches, 2^m predictors
+
+   Simple hardware: m-bit shift register can keep track of state
+   branch prediction buffer can be indexed by {branch address (low order bits), m-bit global history}
+
+*** Tournament predictor
+    use 2-bit saturating counter to choose bewteen local, global, or hybrid (or something like a loop exit predictor)
+** dynamic execution
+   basic: scoreboarding (CDC 6600)
+   Modification to classic 5-stage pipeline: break up decode into 'issue' and 'read operands'
+   issuing is in-order (decode + check for structural hazards)
+   read operands is OO (instructions may bypass here; data hazards cause instruction to wait)
+   
+   more advancing: renaming/tomasulo
+   TODO: Skipping reading this section, because it should be pretty familiar
+
+** speculation (note: only skimmed this section, because it's pretty familiar)
+   must extend tomasolu's algortithm as follows:
+   
+   Need a seperate commit stage! So, we can bypass/forward reuslts without saying that something is complete
+   Everything has to commit in-order
+
+   ROB holds results between instruction execution and commit (CN calls it complete, not commit)
+   Write register file on commit. In classic Tomasolu, RF contains result as soon as possible
+
+   Alternative: instead of holding results in ROB, we have a large rename register file. 
+   Architected registers live somewhere in the RF. Change mapping when instruction completes
+
+   How do we decide when to free a register?
+   Easy way: when another instruction writes the same architectural register, we can free it
+   Hard way: check sources of all outstanding instructions
+
+** static scheduling (skimmed, because VLIW)
+   superscalar processors have overhead. VLIW reduces that overhead
+
+** superscalar dynamic scheduling
+   Must have logic to handle all possible combinations of dependencies between instructions we're issuing
+
+   Note that this is hard to pipeline away. As new instructions are issued and enter reservation stations, we have to update possible dependencies
+
+** advanced speculation techniques
+   how do we deliver a high bandwidth instruction stream (up to 4-8 per clock)?
+   BTB: predict branch target based on PC
+
+   Return address prediction: keep a stack of return addresses
+   
+** hardware vs. software techniques
+   Want to disambiguate memory references so we can re-order loads and stores. 
+   Very difficult to do statically, in general, but can do dynamically
+
+   dynamic branch prediction highly superior; even in-order processors use dynamic branch prediction
+
+   combining both can have complex effects
+   Consider cmov + renaming. Non-move must still copy value to dest, since it was renamed earlier in the pipeline
+
+** threading
+   This section covers, SMT, FMT (switch every clock), CMT (switch on stalls), etc. Skimming because it seems familiar
+
+** case study
+   TODO: go back and look at this
+
+* Chapter 4: Vector, SIMD, and GPU architectures
+  
