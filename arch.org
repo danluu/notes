@@ -13,6 +13,8 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
 ** Chapter 2
    How does way prediction work
 ** Chapter 3
+** Chapter 4
+   Loop-level parallelism: what does it mean for something to be "loop carried"?
 
 * Chapter 1: Basic Quant stuff
 * Chapter 2: Memory Hierarchy
@@ -192,4 +194,70 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
    TODO: go back and look at this
 
 * Chapter 4: Vector, SIMD, and GPU architectures
-  
+** vector processors
+   May have a set of vector registers (e.g., 64 x 64-bit registers)
+   Highly multi-ported (16 read, 8 write in example), to allow vector ops to different registers at the same time
+   May also have a set of scalar registers that can be used as inputs to vector registers (e.g., 32 GPRs and 32 FP regs for 'VMIPS' example)
+
+   Classic example: Y = a * X + Y (SAXPY / DAXPY LINPACK example). 6 VMIPS ops vs. 600 MIPS ops
+
+   Note: even though we have 64-wide regsiters, we may only have, e.g., 4 lanes, so a full op would take 64/4 clocks
+
+   But, if we have, say, 16 lanes and 4 units, we could do 64 / clock, as long as we can keep units occupied
+
+   How do we handle a loop up to n over some wide thing? We have some register that tells us the MVL (maximum vector length).
+   Then, we can (effectively) have one loop that handles any number of iterations up to a multiple of the MVL, and one loop for the remainder
+   The compiler can probably paramaterize a single loop to handle that.
+
+   How do we handle if statements in loops? 
+   Can use vector-mask control (conditional execution for each element in vector). Seems like vectorized cmov-like thing
+
+   Note that GPUs usually don't expose architectural mask registers. Instead, they do something similar internally
+
+   How about vectorizing loads/stores for multi-dimension arrays? Can support stride > 1 in loads/stores.
+   Note: this increases the probability of bank contention in main memory
+
+   What about sparse matricies? Gather-scatter ops
+   Use some index vector. Gather gets values from those indicies. 
+** SIMD
+   Unlike vector machines, we don't have a length register that specifies the number of operands
+   So, we have many more instructions in the ISA
+   Typically don't have strided access, scatter-gather, or conditional execution
+
+   Advantage: much simpler.
+   SIMD loads/stores typically can't cross page boundaries, so don't have to worry about faulting in the middle of a vector load/store.
+   Don't have to keep state (which makes context switches easier)
+   Short fixed-length ops make it easy to add acceleration for particular applications (e.g., some specific permutation op to speed up h.264)
+   Lack of strided access makes simple TLB more effective
+** GPU
+   TODO: go back and read this section. Only skimmed on first reading
+** Loop level parallelism
+   for(...)
+     x[i] = x[i] + s;
+
+   parellel, because dependency is within one iteration, and it isn't "loop carried"
+
+  for(...)
+    A[i+1] = A[i] + C[i]
+    B[i+1] = B[i] + A[i+1]
+
+  Intra loop dependency can be easily parallelized
+  But, Inter-loop dependency (first line, A on prev A) is loop carried
+
+  Note that we can still extract parallelism from some loop carried dependencies
+  Consider the following:
+
+  for(...)
+    A[i] = A[i] + B[i]
+    B[i+1] = C[i] + D[i]
+
+  First line depends on second, but, it's not a cyclic depdendency, so we can still parallelize it
+  using the following transform:
+  A[0] = ...
+  for(...)
+    B[i+1] = ...
+    A[i+1] = ...
+  B[100] = ...
+** core i7 vs nvidia GPU:
+   TODO: read this section
+
