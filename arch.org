@@ -15,6 +15,8 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
 ** Chapter 3
 ** Chapter 4
    Loop-level parallelism: what does it mean for something to be "loop carried"?
+** Chapter 5
+   MESIF: what exactly does the 'F' forward?
 
 * Chapter 1: Basic Quant stuff
 * Chapter 2: Memory Hierarchy
@@ -260,4 +262,52 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
   B[100] = ...
 ** core i7 vs nvidia GPU:
    TODO: read this section
+* Chapter 5: Thread-level parallelism (TLP)
+ 
+  SMP / UMA: usually 8 procs or less
+  DSM / NUMA: distributed shared memory. Multiple memory systems => higher bandwidth
 
+  Address space is shared for both of these types of machines (in contrast to clusters and warehouse-scale machines)
+
+** centralized shared memory architectures
+   Same idea as caching. Small = fast.
+   Chip has local memory via backside bus. Other chips can access by routing through owning chip
+*** coherence
+**** directory based
+     SMP: single centralized directory.
+     In a multicore system, this could be the outermost cache
+
+     DSM: More complicated. See section 5.4
+**** snooping
+     Notes elided because this is familiar
+     Note that we can have snooping on top of a directory (snooping between multicores, with a directory for each multicore)
+
+*** coherence protocols
+**** MSI: basic
+**** MESI
+     E: can have non-shared written without generating invalidates
+     Optimizes case where a single cache reads a line and then writes it
+
+     Note: Read miss (from another core) to this core's E line must change state to S
+**** MESIF (Intel core i series)
+     F: Foward. Designates one processes to respond to requests
+**** MOESI
+     O: line is owned and out of date in memory.
+     Can change from M to O without writing back!
+     Other blocks can share the line, afterwards, but the Owner must supply the value on a miss
+** performance 
+   Recall that we have 3Cs for single core caches (capacity, compulsory, conflict).
+   For SMP, we have coherence misses (two types)
+
+   True sharing misses
+   Examples: first write to a shared block causes an invalidation.
+   Reading a modified word in that block causes the block to be transferred
+
+   False sharing misses
+   Occurs because we have one state for a whole cache line.
+   It's a false miss if different words in a line conflict
+
+   Note: kernel code has a much higher miss rate than user code
+   Besides lack of locality and large code size...
+   it shares data, so we get coherence misses
+   and it initializes pages before allocating them to user code, so we get compulsory misses
