@@ -311,3 +311,12 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
    Besides lack of locality and large code size...
    it shares data, so we get coherence misses
    and it initializes pages before allocating them to user code, so we get compulsory misses
+** locks, etc.
+   TODO: skipping this for now, because it seems familiar
+** consistency
+   Ordering!
+   Simplest model: sequential consistency
+   Memory accesses from one processor are kept in order.
+   Memory accesses between different processes are interleaved arbitrarily
+   
+   
