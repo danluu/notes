@@ -319,4 +319,5 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
    Memory accesses from one processor are kept in order.
    Memory accesses between different processes are interleaved arbitrarily
    
+   Two approaches for better performance: either keep sequential consistency and use other techniques to hide latency, or use relaxed consistency models
    
