@@ -18,6 +18,8 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
 ** Chapter 5
    MESIF: what exactly does the 'F' forward?
 
+   See Adve and Gharachorloo [1996] on relaxed consistency models
+
 * Chapter 1: Basic Quant stuff
 * Chapter 2: Memory Hierarchy
   Terminology. With a set associative cache, we map a block to a set, and we can then place the block anywhere in the set
@@ -315,13 +317,51 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
    TODO: skipping this for now, because it seems familiar
 ** consistency
    Ordering!
-   Simplest model: sequential consistency
+*** Simplest model: sequential consistency
    Memory accesses from one processor are kept in order.
    Memory accesses between different processes are interleaved arbitrarily
-   
-   
+*** Simple programming model that's "easy" to implement efficiently:
+   Assume programs are syncrhonized.
+   This means that every possible write by processor A and read by processor B are seperated by a pair of synchroniziation instructions.
+   One on processor A, after the write, and one of processor B, before the read
+   (for all A, B, A != B)
+
+   Using read and write locks are one simple example of this.
+
+   Non synchronized accesses are called data races (ordering will depend on relative speed of the processors)
+
+*** Relaxed Consistency
+    Allow reads and writes to complete out of order; use synchronization operations to maintain ordering.
+
+    What can we relax?
+    1. W->R (total store ordering). 
+    2. W->W (partial store ordering).
+    3. R->W and R->R (weak ordering or release consitency or something else, depending on sync ops)
+
+    Idea: one argument is that speculation can give you many of the performance advantages for relaxed consistency while maintaining sequential consistency
+    Note: the compiler is a key part of that
+
+*** Croscutting issues
+**** Compiler optimization
+     Defininig a consistency model specifies the range of legal compiler optimizations
+     Recall the list of LLVM consistency models
+     
+     Consider register allocation of shared data. Without clearly defined syncs, we can't interchange a read and a write of 
+     *different* shared data items!
+    
+**** Speculation to hide latency
+     We can execute memory references out of order, as long as we commit in order.
+     Invalidations will kill speculative references to that address (cache line, most likely)
+
+     We can also replay any cases that will result in a violation of sequential consistency, which should be rare
+
+     Note: compiler optimization of memory refs to shared variables is still an open problem. 
+     It's possible that relaxed consistency models will provide a real edge in the future
 ** Notes after this point on chapter 5 lost due to HD crash
    TODO: re-do notes for those sections
+   Two approaches for better performance: either keep sequential consistency and use other techniques to hide latency, or use relaxed consistency models
+
 * Chapter 6: Warehouse-scale computers (WSC)
   Notes on first few sections lost due to HD crash
   TODO: re-do notes for those sections
+
