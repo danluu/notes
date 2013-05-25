@@ -15,3 +15,15 @@
 ** functions
    functions always produce combinational logic.
    Creating latching behavior will cause a problem
+** case statements
+   (synopsis)
+   //synopsis full_case
+
+   This says that case statement is fully defined; unused cases should be don't cares.
+   In addition to the obvious effect,
+   this can cause logic to get optimized away in synthesis
+
+   //synopsis parallel_case
+   
+   This causes all cases to be tested in parallel, even if we have overlapping cases,
+   where you'd normally get a priority encoder
