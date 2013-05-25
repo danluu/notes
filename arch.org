@@ -365,3 +365,4 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
   Notes on first few sections lost due to HD crash
   TODO: re-do notes for those sections
 
+ 
