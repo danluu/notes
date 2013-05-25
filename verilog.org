@@ -16,17 +16,37 @@
    functions always produce combinational logic.
    Creating latching behavior will cause a problem
 ** case statements
+   A case statement is normally equivalent to a series of "if else" statements
+
    (synopsis)
    //synopsis full_case
 
    This says that case statement is fully defined; unused cases should be don't cares.
    In addition to the obvious effect,
    this can cause logic to get optimized away in synthesis
+   
+   Note that we can make a statement full, in simulation, by adding a default
+   Could have the default go to X
+
+   Otherwise, we'll latch the last input if we fall into an empty case
 
    //synopsis parallel_case
    
    This causes all cases to be tested in parallel, even if we have overlapping cases,
    where you'd normally get a priority encoder
+
+   But, if we want that, we can also do it 'manually'
+   Say we have a case statement with the following:
+
+   1??
+   ?1?
+   ??1
+
+   Instead of using parallel_case, which will cause a simulation mismatch, we can do this:
+  
+   1??
+   01?
+   001
 
 ** casex vs. casez
    casex matches Xs as don't cares (in both the case expression and the item)
