@@ -31,3 +31,11 @@
 ** casex vs. casez
    casex matches Xs as don't cares (in both the case expression and the item)
    Post-sythesis, the x will propogate and cause the gate level model to X out
+
+** translate_on / translate_off
+   Bad idea, most of the time, except for debug logic
+
+   Interesting exception is a D-flip flop
+   If we code it in the obvious style (negedge resetb, negedge setb), asserting both and then removing one fails to simulate correctly even though synthesis works
+** #delays
+   Won't synthesize, obv.
