@@ -27,3 +27,7 @@
    
    This causes all cases to be tested in parallel, even if we have overlapping cases,
    where you'd normally get a priority encoder
+
+** casex vs. casez
+   casex matches Xs as don't cares (in both the case expression and the item)
+   Post-sythesis, the x will propogate and cause the gate level model to X out
