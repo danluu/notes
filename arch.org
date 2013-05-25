@@ -320,3 +320,8 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
    Memory accesses between different processes are interleaved arbitrarily
    
    
+** Notes after this point on chapter 5 lost due to HD crash
+   TODO: re-do notes for those sections
+* Chapter 6: Warehouse-scale computers (WSC)
+  Notes on first few sections lost due to HD crash
+  TODO: re-do notes for those sections
