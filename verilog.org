@@ -1,0 +1,17 @@
+* Synthesis gotchas
+** sensitivity list / latching
+   always blocks without posedge or negedge turn into latches, regardless of sensitivity list
+   i.e., having an incomplete sensitivity list will cause incorrect pre-synthesis simulation
+** ordering inside block
+   using a temporary variable before it's assigned will not synthesize correctly
+
+   always @ (a or b or c or d) begin
+     o = a & b | temp;
+     temp = c & d;
+   end
+
+   will synthesize to the same thing, even if we swap the two lines
+   i.e., we'll get an and-or gate post-synthesis either way
+** functions
+   functions always produce combinational logic.
+   Creating latching behavior will cause a problem
