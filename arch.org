@@ -20,6 +20,12 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
 
    See Adve and Gharachorloo [1996] on relaxed consistency models
 
+** Chapter 6
+   What is erasure encoding?
+
+   Interconnection network design
+   Thacker [2007] and Vahdat [2010] talk about using supercomputer techniques for networking. What's that about?
+   Text provides references but not info
 * Chapter 1: Basic Quant stuff
 * Chapter 2: Memory Hierarchy
   Terminology. With a set associative cache, we map a block to a set, and we can then place the block anywhere in the set
@@ -364,5 +370,58 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
 * Chapter 6: Warehouse-scale computers (WSC)
   Notes on first few sections lost due to HD crash
   TODO: re-do notes for those sections
+** programming models
+   MapReduce / Hadoop
+   Note that this is similar to SIMD with horizontal instructions for reduction!
 
- 
+   Scheduling: assign new tasks based on how quickly nodes complete prior tasks
+   A single slow task can delay a whole job
+
+   If we have a 50k server WSC, there will probably be some heterogeneity, and we can take advantage of it
+   Towards the end, we may multiply-schedule jobs and use the result from whichever finishes first
+** architecture of WSCs
+*** Networking
+    Rack has 48 units (hence, the popularity of 48-port switches)
+    Switch will have 2-8 uplinks, so we have a 48/2 to 48/8 reduction in bandwidth
+    i.e., we can communicate faster within a rack than between racks
+
+    Higher level switches are more expensive.
+    Both because they need higher bandwidth and more ports
+*** Storage
+    Options are local disks vs. NAS. NAS is usually redundant and more expensive. 
+    Typically, use local disks and handle distribution and redundancy in hardware
+** physical infrastructure
+   Where? Need to be near internet backbone fiber, low-cost power, and have low risk of environmental disaster
+
+   Power and cooling costs dominate construction costs
+   Normal power flow: 
+   substation 115kV to 13.2kV (99.7% efficient) -> 
+   UPS (94% efficient). In addition to the obvious, UPS provides power conditioning (voltage / current regulation
+   PDU to three-phase 480V (98% efficient). Typ PDU handles 75kW-225kW (10 racks-ish)
+   step down to two-phase 208V (98% efficient)
+   Breakers, wiring, etc., have a total efficiency of about 99%
+
+   Total system efficiency is ~89%
+
+   Cooling is expensive. Chillers are 30% - 50% of the total power
+   CRAC (computer room air conditioning) is 10% - 20%
+   Networking is 5%
+
+   Note that to calculate power usage, nameplate power is typicall worse than real worst case power
+   Furthermore, we'll never see all servers fully-loaded, so worst case WSC power is not just (worst case machine) * N
+   
+   Fan, Weber, and Barroso [2007] recommend oversubscribing power by 40%. Need to monitor with software that will
+   suspend low-priority jobs if too much power is used
+
+   Per machine, 33% CPU, 30% DRAM, 10% disk, 5% networking, 22% other stuff
+** crosscutting issues
+*** WSC network as bottleneck
+    1Gbit datacenter switch: $500k+
+    19.2kW, 500-1000 as much power as a server
+    Somewhat fragile at large scale, but too expensive for more than dual redundancy
+*** Energy efficiency of a machine
+    208V to 110V
+    also to 3.3V, 5V, and 12V
+    and then 12V to 1.2V or 1.8V
+    In 2007, we had 60%-80% efficiency in the machine; much greater losses than outside
+    Now pushing 90% efficiency

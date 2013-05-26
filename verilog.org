@@ -1,3 +1,6 @@
+* questions
+  Think about self-triggering always block section
+
 * Synthesis gotchas
 ** sensitivity list / latching
    always blocks without posedge or negedge turn into latches, regardless of sensitivity list
@@ -59,3 +62,36 @@
    If we code it in the obvious style (negedge resetb, negedge setb), asserting both and then removing one fails to simulate correctly even though synthesis works
 ** #delays
    Won't synthesize, obv.
+* blocking vs. non-blocking assignments
+  General guideline is non-blocking for sequential and blocking for combinational. But why?
+  Note that if we have combinational and sequential logic in the same block, we should use non-blocking assignments
+  Should never mix blocking and non-blocking in the same block
+
+  Note that seperate blocks can be scheduled in any order
+** blocking assignments
+   Can think of it as a one step process
+   evaluate RHS, update LHS. Blocks other assignments *in the same block* until it's finished
+   Can have race conditions if used in multiple blocks (say we have two different posedge clk blocks, like we would for two chunks of sequential logic)
+** non-blocking assignments
+   Can think of it as a two step process
+   1. Evaluate RHS of all non-blocking statements
+   2. Update LHS of all non-blocking statements
+
+   Note: if we re-assign a variable multiple times within an always block, the last one wins
+   If we assign from seperate blocks, that's a race condition
+** verilog "stratified event queue"
+*** Active events
+    Blocking assignments, non-blocking RHS, continuous assigments, $display, primitives
+*** Inactive events
+    #0 blocking assignments. Don't use this!
+*** NBA
+    Update non-blocking things. This can re-trigger more active events
+*** Postponed (monitor events queue)
+    $monitor, $strobe
+** self-triggering always blocks
+   Can't be done with blocking assignments. We could try to use a #delay, but, say we do this:
+   always @(clk) #10 clk = ~clk;
+   
+   Blocking assignment must complete before edge-trigger event can be scheduled.
+   When trigger event is scheduled, assignment has completed,
+   so we don't have a trigger from within the block to trigger transition
