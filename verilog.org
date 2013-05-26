@@ -1,5 +1,7 @@
 * questions
   Think about self-triggering always block section
+  What's a pulse stretcher?
+  Remember what a schmidtt trigger is?
 
 * Synthesis gotchas
 ** sensitivity list / latching
@@ -95,3 +97,31 @@
    Blocking assignment must complete before edge-trigger event can be scheduled.
    When trigger event is scheduled, assignment has completed,
    so we don't have a trigger from within the block to trigger transition
+* resets
+  General guideline: every FF should have a reset, except perhaps follower FFs in high speed logic (shift register)
+  Cummings prefer asyc resets
+** synchronus resets
+   Pros: don't have to worry about spurious reset from glitches. Also, more noise tolerant
+   Smaller logic, better compatability with some cycle based simulators
+   Cons: If reset tree has high fanout, and reset is late arriving, have to schedule time for reset
+   May need to use a pulse stretcher to get a wide enough reset pulse
+   Synchronus reset may put logic on the datapath (timing issue)
+
+   May be annoying with some design styles. Reset doesn't happen until we have a clock edge, but, if we have, e.g., an internal tri-state bus,
+   we want to reset on power up to avoid contention
+** asynchronus resets
+   Must handle reset removal correctly! If we release reset near a clock edge, we may get metastability
+   This means we need a reset synchronizer.
+
+   Design is simple. If we have two DFFs in a row, with our external reset going to those resets, that will synchronize the reset.
+   First DFF gets reset as normal. Second is to remove any metastability
+
+   If we have multiple clock domains, we need a synchronizer for each clock domain
+   Depending on the design, we may need a certain sequence of reset removal
+
+   We can do this by having the output of one synchronier (reset) be the input of another synchornizer (normally, the external reset)
+
+   To avoid reset glitches, we may want a schmidtt trigger on the reset input.
+   Also, to filter glitches, we can use a delay line and an or gate
+
+   TODO: go back and read section on precise multi-ASIC resets
