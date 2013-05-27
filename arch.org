@@ -1,7 +1,7 @@
 Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
 
 * Questions
-** Chapter 1  
+** Chapter 1
   Why does gate vs. interconnect delay scale the way it does?
   For interconnect, naively, both dimensions shrink, so resistance goes up by S^2
   But length shrinks by S, reducing R by S, and also reducing the C we need to charge?
@@ -17,11 +17,18 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
    Loop-level parallelism: what does it mean for something to be "loop carried"?
 ** Chapter 5
    MESIF: what exactly does the 'F' forward?
+   Only one copy can be in the 'F' state. That copy is responsible for answering read requests
+   When we copy something in the 'F' state, the newer copy becomes 'F', and the old copy is demoted to 'S'
+   Because the newest copy is 'F', it's unlikely the 'F' copy will be evicted
+
+   Constrast this to MOESI, where, if we have an 'M' line and a request is made, the copy is made in the 'S' state, and the line is upgraded to 'O'
+   This avoids writing back the data
 
    See Adve and Gharachorloo [1996] on relaxed consistency models
 
 ** Chapter 6
    What is erasure encoding?
+   It's a (forward) error correcting code
 
    Interconnection network design
    Thacker [2007] and Vahdat [2010] talk about using supercomputer techniques for networking. What's that about?

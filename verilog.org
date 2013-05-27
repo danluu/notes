@@ -1,8 +1,8 @@
 * questions
-  Think about self-triggering always block section
-  What's a pulse stretcher?
-  Remember what a schmidtt trigger is?
-  What's the deal with clock domains on CN? I don't recall ever having to deal with sync issues
+** Think about self-triggering always block section
+** What's a pulse stretcher?
+** Remember what a schmitt trigger is?
+   Classic inverter like thing, but with hysteresis
 
 * Synthesis gotchas
 ** sensitivity list / latching
