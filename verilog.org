@@ -2,6 +2,7 @@
   Think about self-triggering always block section
   What's a pulse stretcher?
   Remember what a schmidtt trigger is?
+  What's the deal with clock domains on CN? I don't recall ever having to deal with sync issues
 
 * Synthesis gotchas
 ** sensitivity list / latching
@@ -64,6 +65,8 @@
    If we code it in the obvious style (negedge resetb, negedge setb), asserting both and then removing one fails to simulate correctly even though synthesis works
 ** #delays
    Won't synthesize, obv.
+
+   We may need these when doing mixed verilog / gate level simulations, due to hold time issues
 * blocking vs. non-blocking assignments
   General guideline is non-blocking for sequential and blocking for combinational. But why?
   Note that if we have combinational and sequential logic in the same block, we should use non-blocking assignments
@@ -125,3 +128,89 @@
    Also, to filter glitches, we can use a delay line and an or gate
 
    TODO: go back and read section on precise multi-ASIC resets
+* FIFOs (for clock domain crossing)
+** Simple synchronus implementation:
+   Use a counter that increments on a read and decrements on a write
+   Full at counter = CONSTANT, empty at counter = 0
+
+   Doesn't work for an async counter, because the counter would have to support two clock domains
+
+** Async design: read/write pointers
+   Write pointer points to next word to be written. 
+   Read pointer points to next word to be read.
+   
+   At reset, both pointers point to 0.
+   After the first write, write pointer advances and empty flag is cleared
+   We also immediately drive the data at 0 onto the read port
+   
+   FIFO empty when pointers ==, also full when pointers ==
+   How to determine which?
+   We can add one extra bit. If that bit is the same, empty. If different, full
+** counter
+   How do we sync a count between two clock domains?
+   Every bit of an n-bit counter can change during an increment
+
+   One way to handle this is to hold values in a holding register and pass a ready signal.
+   When the other domain sees the ready signal it sends an ack
+   
+   Another approach is to use a gray code counter
+
+   But, note that if we want to do the thing above with the MSB, we can't use a true gray code
+   If we use a standard reflected gray code, we can flip MSB-1 in the bottom half to make
+   the bottom half match the top half instead of mirror it. But, this causes two 2-bit changes.
+
+   full an empty are implementation dependent
+   One obvious choice is to put empty in the read domain and full in the write domain, so that 
+   the external inputs see them immediately
+
+   // TODO: read FIFO paper #2
+* synchronization techniques (clock domain crossing / async signals)
+  Just go through 2 flip flops. Maybe 3 for high speed designs. Note that MTBF ~ 1 / (freq * switching_freq)
+
+  We should register signals before sending them out. This removes glitches, which increase the probability of metastability
+** fast to slow
+   Might change twice before it can be sampled, or be too close to the sampling edges of the slower domain
+
+   Note that slow to fast isn't generally a problem, as long as the fast domain is 1.5X or more (why not 2x, ala nyquist?)
+   So, maybe we can just use a 2 flip flop synchronizer
+   
+   "three edge" rule
+   CDC signal must be 1.5x the cycle width of the recieving domain clock period, hence, three clock edges
+
+   Why? So, it's obviously bad if the CDC is less than the cycle width.
+   What if it's just slightly greater?
+   The rising edge could catch t_su of the first edge, and the falling edge could catch t_h of the second edge
+*** Open loop solution
+    Make sure the pulse is stretched to obey the 3 edge rule
+*** Closed loop solution
+    Require ack signal from recieving domain before allowing sending domain to change control signals
+    This can be much slower than the open loop solution
+** multi-bit CDC
+   Using synchronizers on each individual bit isn't sufficient.
+   Any skew between the two signals can cause them to get synced differently
+
+   Strategies
+*** consolidate into single bit
+    Not always possible, obv.
+*** use synchronized load signal
+**** multi-cycle path (MCP) formulation
+     Send both data and en at the same time. en is synced and sends an ack back
+     Once sending side gets the ack it can change the data
+
+     Pros: Sending domain doesn't need to figure out correct pulse width
+     Sending domain just needs to switch enable. Doesn't need to switch back
+
+     How does the enable pulse work? It's typical to use a synchronized enable pulse
+     We can use two FFs to get rid of metastability and sync the signal
+     Then one output goes directly into an xor, and the other goes through another DFF before going to an XOR, which will create a pulse
+
+     We also produce a 'q' (non pulsed) output directly from the 3rd DFF. This can be used to generate the ack signal, which goes
+     into an identical pulse generator on the recieving side
+*** gray codes
+    Sometimes don't need to sample every bit
+*** async FIFO
+    See notes above on FIFO, and fifo.v
+*** 1-deep / 2-register FIFO
+    TODO: go back and read this section
+    
+  
