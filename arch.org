@@ -33,6 +33,8 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
    Interconnection network design
    Thacker [2007] and Vahdat [2010] talk about using supercomputer techniques for networking. What's that about?
    Text provides references but not info
+** Misc
+   When do we want a parallel bus vs. a serial bus?
 * Chapter 1: Basic Quant stuff
 * Chapter 2: Memory Hierarchy
   Terminology. With a set associative cache, we map a block to a set, and we can then place the block anywhere in the set
