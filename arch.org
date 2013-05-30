@@ -35,6 +35,7 @@ Notes from reading H&P's Computer Architecture: A Quantitative Approach (5ed)
    Text provides references but not info
 ** Misc
    When do we want a parallel bus vs. a serial bus?
+   How should you do an external sort, from a systems perspective: http://idleprocess.wordpress.com/2010/11/25/gray-sort-the-most-fun-ive-ever-had-with-a-few-racks-of-computers/
 * Chapter 1: Basic Quant stuff
 * Chapter 2: Memory Hierarchy
   Terminology. With a set associative cache, we map a block to a set, and we can then place the block anywhere in the set
