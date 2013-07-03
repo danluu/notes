@@ -1,4 +1,6 @@
 Notes from SystemVerilog for Design (Sutherland, Davidmann, and Flake)
+* Questions
+  When should we use task vs. function vs. module?
 * Chapter 1
   Some intro stuff
 * Chaoter 2: Namespaces (packages)
@@ -95,3 +97,13 @@ Notes from SystemVerilog for Design (Sutherland, Davidmann, and Flake)
 
   We have a foreach operator that can be used on arrays. It gives us one index for each array dimension, 
   so it's really just like a nested for (*), and not like a normal foreach
+* Chapter 6: Procedural Blocks, Tasks, and Functions
+  Have always blocks as in Verilog
+  Can specifiy always_ff, always_comb, or always_latch
+  These have no real power. Warning based on putting bogus logic in these blocks is optional
+
+  always_comb infers its sensitivity list is the obvious manner
+  always_latch infers sensitivity list similarly
+  always_ff requires a sensitivity list
+
+  Tasks: 
