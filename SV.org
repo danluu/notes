@@ -1,0 +1,45 @@
+Notes from SystemVerilog for Design (Sutherland, Davidmann, and Flake)
+* Chapter 1
+  Some intro stuff
+* Chaoter 2: Namespaces (packages)
+  Now have namespaces (via ::)
+  It's not clear from the text if we can have foo::bar::baz, or merely foo::bar
+
+  Also have struct, typedef, and enum
+
+  Have static vs. automatic. Static is non-synthesizable? That seems weird. Can that be right?
+  Seems odd because everything was static in Verilog 95
+* Chapter 3 (literals and built-in data types)
+  random gotcha:
+  we can paramaterize the width of the following constants:
+  0
+  'bx
+  'bz
+
+  But, not 1s, since 1s don't get extended. We'd have to invert 0s to get that.
+
+  logic is new. Basically same as reg
+  Have bit for 2-state logic
+  
+  additionally, can specify signed vs. unsigned
+  reg [63:0] default_unsigned;
+  reg signed [63:0] signed;
+
+  int/longint are signed by default and can be made unsigned. int = 32 bits, longint = 64 bits.
+
+  The text notes that all automatic functions / tasks use 'dynamic' variables. This doesn't seem to refer to dynamic scope.
+  Or, if it does, the explanation is weird.
+
+  Can use automatic to create recursive functions
+
+  Note that in Verilog 95 everything is static
+
+  Clarificaiton on static vs. automatic from previous chapter
+  static variable *initialization* isn't synthesizable, while automatic variable initializaiton is
+  To use automatic in synthesis, make sure it's only used for temporary storage inside a function/task
+
+  Variable initialization:
+  Can now initialize outside of always blocks by assigning variable as it's declared
+
+  There's also a section on casting. Skipping for now because it seems like a good idea to avoid casting at all?
+
