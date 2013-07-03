@@ -42,4 +42,22 @@ Notes from SystemVerilog for Design (Sutherland, Davidmann, and Flake)
   Can now initialize outside of always blocks by assigning variable as it's declared
 
   There's also a section on casting. Skipping for now because it seems like a good idea to avoid casting at all?
+* Chapter 4: User-Defined and Enumerated types
+  Example typedef:
+  typedef logic [3:0] nibble;
+  nibble opA, opB;
 
+  Can put typedefs like this in a package to share between modules
+
+  User defined types: convention is to end name in _t
+
+  enum: obvious use is for states in an FSM. This avoids explicitly mapping states to specific values?
+  Can also autogenerate state names
+  enum {RESET, S[5], W[6:9]} state;
+
+  generates RESET, S0, ..., S4, W6, ..., W9
+  seems weirdly inconsistent that we get S4 and W9
+
+  Note that names live in normal variable scope, and are not attached to a specfic declaration, so we can't reset, e.g., RESET within a single scope
+
+  enumerated types have methods: .first, .last, .next, .prev, .num, and .name
