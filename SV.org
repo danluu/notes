@@ -61,3 +61,37 @@ Notes from SystemVerilog for Design (Sutherland, Davidmann, and Flake)
   Note that names live in normal variable scope, and are not attached to a specfic declaration, so we can't reset, e.g., RESET within a single scope
 
   enumerated types have methods: .first, .last, .next, .prev, .num, and .name
+* Chapter 5: Arrays, structs, and unions
+  Structs:
+  can assign explicitly, or by using `{} and giving things in definition order
+  Can also assign everything by doing `{default: 0}
+
+  Normal structs treat variables independantly.
+  Can also use a packed struct, where things are laid out contigiously. Values must be integral (e.g, bit, int, or logic).
+  We can then do things like shift the whole struct 
+  Packed structs act like one big vector
+
+  To pass structs through ports, define as user defined type (typedef struct)
+
+  Unions
+  Like in C. Unpacked unions can contain any type and are not synthesizable
+
+  packed union. Can use to, e.g., look at something as a bunch of bytes or some other data type:
+
+  union packed {
+    data_packet_t packet;
+    logic [7:0][7:0] bytes;
+  } dreg;
+
+  Packed unions can be synthesized
+
+  Arrays:
+  Verilog style arrays are called unpacked arrays
+  reg [5:0] blah [1023:0];
+
+  We can also make packed arrays
+  logic [3:0] [7:0] data;
+  This is stored as data[3][7:0], ... ,data[0][7:0]
+
+  We have a foreach operator that can be used on arrays. It gives us one index for each array dimension, 
+  so it's really just like a nested for (*), and not like a normal foreach
