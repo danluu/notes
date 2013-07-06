@@ -106,4 +106,24 @@ Notes from SystemVerilog for Design (Sutherland, Davidmann, and Flake)
   always_latch infers sensitivity list similarly
   always_ff requires a sensitivity list
 
-  Tasks: 
+  Tasks/Funcions: 
+  In verilog, can only exit from the end. SV allows return statements
+
+  Functions can't have delays or event controls, and can't use non-blocking statements.
+  SV allows void functions, which lift some restrictions? This section isn't clear to me
+  Or maybe not
+  Functions can't call tasks, but functions can call void functions, which act like tasks (they're just statements)
+  ???
+  SV also adds 'output' and 'inout' to functions, so a void function to propogate changes outside its scope
+
+  For synthesis, void functions are recommended over tasks
+  Note: can't call functions with outputs in the following cases:
+  event expression
+  expression with procedural continuous assignment
+  expression that isn't within a procedural statement
+
+  Functions are normal call by value and not call by ref
+  can use ref instead of input/output/inout intead, to get a reference
+  Only automatic tasks/functions can use ref
+  Can also use const ref
+  
