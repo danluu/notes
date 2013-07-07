@@ -126,4 +126,26 @@ Notes from SystemVerilog for Design (Sutherland, Davidmann, and Flake)
   can use ref instead of input/output/inout intead, to get a reference
   Only automatic tasks/functions can use ref
   Can also use const ref
+* Chpater 7: Procedural Statements
+  Now have ++ and --. Can write stuff like
+  for (i = 0; i <= 31; i++) begin
+     ...
+  end
+
+  ++/-- are blocking
+
+  SV also adds +=, <<=, etc.
+  also blocking
+
+  have 'inside'
+  if (a inside {3'b001, 3'b010, 3'b100})
+  same as a == 3'b001 || ...
+
+  Can also use a CAM
+  int d_array[0:1023];
+  if (13 inside {d_array})
+
+  Z/X are don't care for inside
+  
+  Can also use with case. Acts like casex, except that only RHS X/Z are don't care
   
