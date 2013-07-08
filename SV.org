@@ -159,4 +159,33 @@ Notes from SystemVerilog for Design (Sutherland, Davidmann, and Flake)
   Don't just use an enum for states. Default is a 2-state int (32 bits). Use 'enum logic [SIZE:0]'
 
   Book basically says to see Cliff Cumming's paper for more depth
+* Chapter 9: Modules, etc.
+  We now have prototypes!
+  extern module foo (whatever);
+
+  If we have whatever = all the ports, we don't need to list them again when defining the module itself
+  module foo (.*);
+
+  Also have nested module scopes now
+
+  Can use `include to avoid putting all of a scope in one file
+  module foo ();
+    `include baz.v;
+    `include bar.v;
+  endmodule 
+
+  Named port connections. Can now just listed one name (.foo), and it will automatically connect to external wire of same name
+  Can also just do .* to auto connect everything
+
+  Also now have 'alias'. This is not the same as assign. Alias gives you a reference, so changes are bi-directional.
+  Assign only copies the RHS to the LHS.
+  We can only alias wires (and wand, tri, etc.), not reg (and logic)
+
+  SV relaxes the restriction that output ports must be regs and input ports must be wires
+
+  Restriction is now that variable types can only have a single source that writes a value at any particular moment in time
+  Note that ref ports aren't synthesizable
+
+  Can also declare type of port (size, reg vs. logic, etc.) in port declaration
+
   
