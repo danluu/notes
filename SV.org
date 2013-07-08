@@ -148,4 +148,15 @@ Notes from SystemVerilog for Design (Sutherland, Davidmann, and Flake)
   Z/X are don't care for inside
   
   Can also use with case. Acts like casex, except that only RHS X/Z are don't care
+
+  SV change: can now have loop local (automatic) variables. These can't be dumped or referenced outside of the for loop
+
+  also now have do ... while
+
+  Skipping section on unique / priority
+* Chapter 8: FSMs
+  Gotchas:
+  Don't just use an enum for states. Default is a 2-state int (32 bits). Use 'enum logic [SIZE:0]'
+
+  Book basically says to see Cliff Cumming's paper for more depth
   
