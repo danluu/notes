@@ -153,7 +153,15 @@ Notes from SystemVerilog for Design (Sutherland, Davidmann, and Flake)
 
   also now have do ... while
 
-  Skipping section on unique / priority
+  Priority:
+  case statements are already priority statements! So, what does this mean?
+  It means that all possible cases have been listed, i.e., it's an assertion that we won't hit a case that's not listed
+  priority case is really just like the synopsis full_case directive, except that it also works in simulation
+
+  Unique is like synopsis parallel_case. It's an assertion that we can't match multiple cases at the same time.
+
+  priority and unique can also be applied to if, and they have the same meaning
+  
 * Chapter 8: FSMs
   Gotchas:
   Don't just use an enum for states. Default is a 2-state int (32 bits). Use 'enum logic [SIZE:0]'
