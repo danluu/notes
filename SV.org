@@ -187,5 +187,6 @@ Notes from SystemVerilog for Design (Sutherland, Davidmann, and Flake)
   Note that ref ports aren't synthesizable
 
   Can also declare type of port (size, reg vs. logic, etc.) in port declaration
-
-  
+* Chapter 10: Interfaces
+  declare an interface that we can use in multipe places. Basically seems to be a list of ports that we can re-use
+  Wait, no, it's something more. Skipping this section for now...
