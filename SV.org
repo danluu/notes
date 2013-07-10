@@ -166,7 +166,14 @@ Notes from SystemVerilog for Design (Sutherland, Davidmann, and Flake)
   Gotchas:
   Don't just use an enum for states. Default is a 2-state int (32 bits). Use 'enum logic [SIZE:0]'
 
-  Book basically says to see Cliff Cumming's paper for more depth
+  Book basically says to see Cliff Cumming's paper for more depth.
+
+  His SV paper is basically just his old paper, with a couple sections that talk about new syntax.
+  Key takeaways are, use "3 always block style" instead of "1 always block style"
+  It's more concise, and gets better timing and area results for synthesis (using tools from 2002/2003).
+  Would be interesting to re-do synthesis with modern tools
+
+  Also, using always_comb, etc. instead of old school Verilog. Nothing groundbreaking
 * Chapter 9: Modules, etc.
   We now have prototypes!
   extern module foo (whatever);
