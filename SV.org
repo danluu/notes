@@ -197,4 +197,19 @@ Notes from SystemVerilog for Design (Sutherland, Davidmann, and Flake)
   Can also declare type of port (size, reg vs. logic, etc.) in port declaration
 * Chapter 10: Interfaces
   declare an interface that we can use in multipe places. Basically seems to be a list of ports that we can re-use
-  Wait, no, it's something more. Skipping this section for now...
+  Wait, no, it's something more.
+
+  What can go in an interface?
+  Signals and ports
+  Communication protocols (what does this mean?)
+  Protocol checking and other verification stuff
+
+  How is an interface not a module?
+  Interfaces can't contain instances of things
+  Can be used in a port list (modules can't be).
+  Interface can contain modports
+
+  a modport specifies which of the logic/wires in the interfaces are inputs and which are outputs.
+  We can have, for example, a master and slave modport, which have opposite directions, and all slaves can just use the slave modport
+
+  If we don't specifiy a modport, all nets are inout, and variables are ref
